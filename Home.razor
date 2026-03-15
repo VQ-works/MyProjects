@@ -1,0 +1,57 @@
+﻿@page "/"
+@rendermode InteractiveServer
+@inject NavigationManager NavManager
+<PageTitle>Minasweeper</PageTitle>
+
+<div class="logo">
+    <div class="title">MINESWEEPER</div>
+    <div class="img"></div>
+</div>
+<div class="menu">
+    <form action="Play">
+        <select name="Level" @onchange="ChangeLevel">
+            <option value="easy" >Easy</option>
+            <option value="medium">Medium</option>
+            <option value="hard">Hard</option>
+        </select>
+        <button @onclick="ButtonClick">
+            <div class="triangle"></div>
+        </button>
+    </form>
+</div>
+@code
+{
+    public static string? _level = "easy";
+    public static Play.Game? Game;
+    void ChangeLevel(ChangeEventArgs args)
+    {
+        _level = args.Value?.ToString();
+        Console.WriteLine(_level);
+    }
+
+   
+    public void ButtonClick()
+    {
+        if (Game != null)
+        {
+            Play.Dict.Clear(); 
+            Play.Game.Tools.Arr.Clear();
+            Play.Game.Tools.ForFlags.Clear();
+            Play.Game.Tools.doesGameEnd =  false;
+            Game = null;
+        }
+
+        Game = _level.ToLower() switch
+        {
+            "easy"   => new Play.Game(9, 50, 10),
+            "medium" => new Play.Game(14, 43, 35),
+            "hard"   => new Play.Game(18, 35, 70),
+            _        => new Play.Game(0, 0, 0)
+        };
+
+
+        StateHasChanged();
+    
+        NavManager.NavigateTo("Play");
+    }
+}
